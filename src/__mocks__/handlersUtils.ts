@@ -8,16 +8,20 @@ export const setupMockHandlerCreation = (initEvents = [] as Event[]) => {
   eventStore = initEvents;
 };
 
-export const setupMockHandlerUpdateById = (id: string, updates: Event>) => {
-  eventStore = eventStore.map((event) =>
-    Number(event.id) === Number(id) ? { ...updates }
-  );
+export const setupMockHandlerUpdateById = (update: Event[]) => {
+  eventStore = update;
+  console.log('====================================');
+  console.log('eventStore');
+  console.log(eventStore);
+  console.log('====================================');
 };
 
-export const setupMockHandlerAppend = (updates: Record<string, unknown>) => {
-  eventStore = [...eventStore, { id: String(eventStore.length + 1), ...updates } as Event];
+export const setupMockHandlerAppend = (update: Event) => {
+  eventStore = [...eventStore, update];
 };
 
 export const setupMockHandlerDeletion = (id: string) => {
   eventStore = eventStore.filter((event) => Number(event.id) !== Number(id));
 };
+
+export const setupMockHandlerFetch = () => eventStore;

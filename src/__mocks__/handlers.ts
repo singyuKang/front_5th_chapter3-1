@@ -5,6 +5,7 @@ import {
   setupMockHandlerAppend,
   setupMockHandlerCreation,
   setupMockHandlerDeletion,
+  setupMockHandlerFetch,
   setupMockHandlerUpdateById,
 } from './handlersUtils';
 import { events } from './response/events.json' assert { type: 'json' };
@@ -16,29 +17,36 @@ setupMockHandlerCreation(events as Event[]);
 
 export const handlers = [
   http.get('/api/events', () => {
-    return HttpResponse.json(events);
+    return HttpResponse.json({ events: setupMockHandlerFetch() });
   }),
 
   http.post('/api/events', async ({ request }) => {
     const event = (await request.json()) as Event;
-    const newEvent = { ...event, id: events.length + 1 };
+    const newEvent = { ...event, id: String(events.length + 1) };
+    console.log('====================================');
+    console.log(newEvent);
+    console.log('====================================');
     setupMockHandlerAppend(newEvent);
     return HttpResponse.json(newEvent);
   }),
 
   http.put('/api/events/:id', async ({ request, params }) => {
     const id = params.id as string;
-    const updates = (await request.json()) as Record<string, unknown>;
+    const update = (await request.json()) as Event;
 
-    const updatedEvent = events.map((event) =>
-      Number(event.id) === Number(id) ? ({ ...event, ...updates } as Event) : event
+    const updatedEvent = events.map(
+      (event): Event =>
+        Number(event.id) === Number(id) ? ({ ...event, ...update } as Event) : (event as Event)
     );
-    setupMockHandlerUpdateById(id, updatedEvent);
-    return HttpResponse.json(updatedEvent);
+    console.log('====================================');
+    console.log(updatedEvent);
+    console.log('====================================');
+    setupMockHandlerUpdateById(updatedEvent);
+    return HttpResponse.json(event);
   }),
 
   http.delete('/api/events/:id', ({ params }) => {
-    const { id } = params;
+    const id = params.id as string;
     const filteredEvents = events.filter((event) => Number(event.id) !== Number(id));
     setupMockHandlerDeletion(id);
     return HttpResponse.json(filteredEvents);
