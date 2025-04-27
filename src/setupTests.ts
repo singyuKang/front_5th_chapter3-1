@@ -16,7 +16,7 @@ beforeAll(() => {
 beforeEach(() => {
   expect.hasAssertions();
 
-  vi.setSystemTime(new Date('2024-10-01'));
+  vi.setSystemTime(new Date('2025-10-01'));
 });
 
 afterEach(() => {

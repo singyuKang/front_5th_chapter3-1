@@ -24,7 +24,7 @@ export const setupMockHandlerUpdating = () => {
     {
       id: '1',
       title: '기존 회의',
-      date: '2024-10-15',
+      date: '2025-10-15',
       startTime: '09:00',
       endTime: '10:00',
       description: '기존 팀 미팅',
@@ -36,7 +36,7 @@ export const setupMockHandlerUpdating = () => {
     {
       id: '2',
       title: '기존 회의2',
-      date: '2024-10-15',
+      date: '2025-10-15',
       startTime: '11:00',
       endTime: '12:00',
       description: '기존 팀 미팅 2',
@@ -67,7 +67,7 @@ export const setupMockHandlerDeletion = () => {
     {
       id: '1',
       title: '삭제할 이벤트',
-      date: '2024-10-15',
+      date: '2025-10-15',
       startTime: '09:00',
       endTime: '10:00',
       description: '삭제할 이벤트입니다',
