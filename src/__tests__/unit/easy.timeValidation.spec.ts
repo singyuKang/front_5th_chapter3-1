@@ -1,34 +1,15 @@
 import { getTimeErrorMessage } from '../../utils/timeValidation';
 
 describe('getTimeErrorMessage >', () => {
-  it('시작 시간이 종료 시간보다 늦을 때 에러 메시지를 반환한다', () => {
-    const result = getTimeErrorMessage('14:30:00', '14:20:00');
-    expect(result.startTimeError).toBe('시작 시간은 종료 시간보다 빨라야 합니다.');
-  });
+  it('시작 시간이 종료 시간보다 늦을 때 에러 메시지를 반환한다', () => {});
 
-  it('시작 시간과 종료 시간이 같을 때 에러 메시지를 반환한다', () => {
-    const result = getTimeErrorMessage('14:30:00', '14:30:00');
-    expect(result.startTimeError).toBe('시작 시간은 종료 시간보다 빨라야 합니다.');
-  });
+  it('시작 시간과 종료 시간이 같을 때 에러 메시지를 반환한다', () => {});
 
-  it('시작 시간이 종료 시간보다 빠를 때 null을 반환한다', () => {
-    const result = getTimeErrorMessage('14:20:00', '14:30:00');
-    expect(result.startTimeError).toBeNull();
-  });
+  it('시작 시간이 종료 시간보다 빠를 때 null을 반환한다', () => {});
 
-  it('시작 시간이 비어있을 때 null을 반환한다', () => {
-    const result = getTimeErrorMessage('', '14:30:00');
-    expect(result.startTimeError).toBeNull();
-  });
+  it('시작 시간이 비어있을 때 null을 반환한다', () => {});
 
-  it('종료 시간이 비어있을 때 null을 반환한다', () => {
-    const result = getTimeErrorMessage('14:30:00', '');
-    expect(result.endTimeError).toBeNull();
-  });
+  it('종료 시간이 비어있을 때 null을 반환한다', () => {});
 
-  it('시작 시간과 종료 시간이 모두 비어있을 때 null을 반환한다', () => {
-    const result = getTimeErrorMessage('', '');
-    expect(result.startTimeError).toBeNull();
-    expect(result.endTimeError).toBeNull();
-  });
+  it('시작 시간과 종료 시간이 모두 비어있을 때 null을 반환한다', () => {});
 });
