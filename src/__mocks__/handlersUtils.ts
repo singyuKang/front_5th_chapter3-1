@@ -3,7 +3,6 @@ import { http, HttpResponse } from 'msw';
 import { server } from '../setupTests';
 import { Event } from '../types';
 
-// ? Medium: 아래 여러가지 use 함수는 어떤 역할을 할까요? 어떻게 사용될 수 있을까요?
 export const setupMockHandlerCreation = (initEvents = [] as Event[]) => {
   const mockEvents: Event[] = [...initEvents];
 
@@ -25,7 +24,7 @@ export const setupMockHandlerUpdating = () => {
     {
       id: '1',
       title: '기존 회의',
-      date: '2024-10-15',
+      date: '2025-10-15',
       startTime: '09:00',
       endTime: '10:00',
       description: '기존 팀 미팅',
@@ -37,7 +36,7 @@ export const setupMockHandlerUpdating = () => {
     {
       id: '2',
       title: '기존 회의2',
-      date: '2024-10-15',
+      date: '2025-10-15',
       startTime: '11:00',
       endTime: '12:00',
       description: '기존 팀 미팅 2',
@@ -68,7 +67,7 @@ export const setupMockHandlerDeletion = () => {
     {
       id: '1',
       title: '삭제할 이벤트',
-      date: '2024-10-15',
+      date: '2025-10-15',
       startTime: '09:00',
       endTime: '10:00',
       description: '삭제할 이벤트입니다',
