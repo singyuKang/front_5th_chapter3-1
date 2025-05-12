@@ -149,13 +149,77 @@ describe('getWeeksAtMonth', () => {
 });
 
 describe('getEventsForDay', () => {
-  it('특정 날짜(1일)에 해당하는 이벤트만 정확히 반환한다', () => {});
+  const events: Event[] = [
+    {
+      category: '업무',
+      date: '2025-05-20',
+      id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '11:00',
+      description: '주간 팀 미팅',
+      location: '회의실 A"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    },
+    {
+      category: '개인',
+      date: '2025-05-21',
+      id: '09702fb3-a478-40b3-905e-9ab3c8849dcd',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '13:30',
+      description: '동료와 점심 식사',
+      location: '회사 근처 식당"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    },
+    {
+      category: '개인',
+      date: '2025-05-01',
+      id: '09702fb3-a478-40b3-905e-9ab3c8849dcdf',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '13:30',
+      description: '동료와 점심 식사',
+      location: '회사 근처 식당"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    },
+  ];
 
-  it('해당 날짜에 이벤트가 없을 경우 빈 배열을 반환한다', () => {});
+  it('특정 날짜(1일)에 해당하는 이벤트만 정확히 반환한다', () => {
+    const eventDay = getEventsForDay(events, 1);
+    expect(eventDay).toEqual([
+      {
+        category: '개인',
+        date: '2025-05-01',
+        id: '09702fb3-a478-40b3-905e-9ab3c8849dcdf',
+        title: '팀 회의',
+        startTime: '10:00',
+        endTime: '13:30',
+        description: '동료와 점심 식사',
+        location: '회사 근처 식당"',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 1,
+      },
+    ]);
+  });
 
-  it('날짜가 0일 경우 빈 배열을 반환한다', () => {});
+  it('해당 날짜에 이벤트가 없을 경우 빈 배열을 반환한다', () => {
+    const eventDay = getEventsForDay(events, 10);
+    expect(eventDay).toEqual([]);
+  });
 
-  it('날짜가 32일 이상인 경우 빈 배열을 반환한다', () => {});
+  it('날짜가 0일 경우 빈 배열을 반환한다', () => {
+    const eventDay = getEventsForDay(events, 0);
+    expect(eventDay).toEqual([]);
+  });
+
+  it('날짜가 32일 이상인 경우 빈 배열을 반환한다', () => {
+    const eventDay = getEventsForDay(events, 32);
+    expect(eventDay).toEqual([]);
+  });
 });
 
 describe('formatWeek', () => {
