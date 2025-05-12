@@ -147,7 +147,103 @@ describe('isOverlapping', () => {
 });
 
 describe('findOverlappingEvents', () => {
-  it('새 이벤트와 겹치는 모든 이벤트를 반환한다', () => {});
+  const events: Event[] = [
+    {
+      category: '업무',
+      date: '2025-05-20',
+      id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '11:00',
+      description: '주간 팀 미팅',
+      location: '회의실 A"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    },
+    {
+      category: '개인',
+      date: '2025-05-20',
+      id: '09702fb3-a478-40b3-905e-9ab3c8849dcd',
+      title: '팀 회의',
+      startTime: '11:00',
+      endTime: '12:30',
+      description: '동료와 점심 식사',
+      location: '회사 근처 식당"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    },
+    {
+      category: '개인',
+      date: '2025-05-01',
+      id: '09702fb3-a478-40b3-905e-9ab3c8849dcdf',
+      title: '팀 회의 하다가 인사하기',
+      startTime: '12:30',
+      endTime: '13:30',
+      description: '지나가면서 신규에게 인사하기',
+      location: '회사',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    },
+  ];
 
-  it('겹치는 이벤트가 없으면 빈 배열을 반환한다', () => {});
+  it('새 이벤트와 겹치는 모든 이벤트를 반환한다', () => {
+    const event: Event = {
+      category: '개인',
+      date: '2025-05-20',
+      id: '09702fb3-a478-40b3-905e-9ab3c8849asd',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '12:00',
+      description: '동료와 점심 식사',
+      location: '회사 근처 식당"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    };
+
+    const result = findOverlappingEvents(event, events);
+    expect(result).toEqual([
+      {
+        category: '업무',
+        date: '2025-05-20',
+        id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+        title: '팀 회의',
+        startTime: '10:00',
+        endTime: '11:00',
+        description: '주간 팀 미팅',
+        location: '회의실 A"',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 1,
+      },
+      {
+        category: '개인',
+        date: '2025-05-20',
+        id: '09702fb3-a478-40b3-905e-9ab3c8849dcd',
+        title: '팀 회의',
+        startTime: '11:00',
+        endTime: '12:30',
+        description: '동료와 점심 식사',
+        location: '회사 근처 식당"',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 1,
+      },
+    ]);
+  });
+
+  it('겹치는 이벤트가 없으면 빈 배열을 반환한다', () => {
+    const event: Event = {
+      category: '개인',
+      date: '2025-05-20',
+      id: '09702fb3-a478-40b3-905e-9ab3c8849asd',
+      title: '팀 회의',
+      startTime: '19:00',
+      endTime: '20:00',
+      description: '동료와 점심 식사',
+      location: '회사 근처 식당"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    };
+
+    const result = findOverlappingEvents(event, events);
+    expect(result).toEqual([]);
+  });
 });
