@@ -85,9 +85,65 @@ describe('convertEventToDateRange', () => {
 });
 
 describe('isOverlapping', () => {
-  it('두 이벤트가 겹치는 경우 true를 반환한다', () => {});
+  it('두 이벤트가 겹치는 경우 true를 반환한다', () => {
+    const eventOne: Event = {
+      category: '업무',
+      date: '2025-05-20',
+      id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+      title: '팀 회의',
+      startTime: '10:30',
+      endTime: '11:00',
+      description: '주간 팀 미팅',
+      location: '회의실 A"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    };
+    const eventTwo: Event = {
+      category: '업무',
+      date: '2025-05-20',
+      id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '11:30',
+      description: '주간 팀 미팅',
+      location: '회의실 A"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    };
 
-  it('두 이벤트가 겹치지 않는 경우 false를 반환한다', () => {});
+    const result = isOverlapping(eventOne, eventTwo);
+    expect(result).toBe(true);
+  });
+
+  it('두 이벤트가 겹치지 않는 경우 false를 반환한다', () => {
+    const eventOne: Event = {
+      category: '업무',
+      date: '2025-05-20',
+      id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+      title: '팀 회의',
+      startTime: '10:00',
+      endTime: '11:00',
+      description: '주간 팀 미팅',
+      location: '회의실 A"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    };
+    const eventTwo: Event = {
+      category: '업무',
+      date: '2025-05-20',
+      id: '2b7545a6-ebee-426c-b906-2329bc8d62bd',
+      title: '팀 회의',
+      startTime: '11:00',
+      endTime: '12:30',
+      description: '주간 팀 미팅',
+      location: '회의실 A"',
+      repeat: { type: 'none', interval: 0 },
+      notificationTime: 1,
+    };
+
+    const result = isOverlapping(eventOne, eventTwo);
+    expect(result).toBe(false);
+  });
 });
 
 describe('findOverlappingEvents', () => {
