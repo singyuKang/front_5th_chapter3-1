@@ -174,7 +174,7 @@ describe('findOverlappingEvents', () => {
     },
     {
       category: '개인',
-      date: '2025-05-01',
+      date: '2025-05-30',
       id: '09702fb3-a478-40b3-905e-9ab3c8849dcdf',
       title: '팀 회의 하다가 인사하기',
       startTime: '12:30',
