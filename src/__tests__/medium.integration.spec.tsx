@@ -3,7 +3,11 @@ import { render, screen, within, act, waitFor } from '@testing-library/react';
 import { UserEvent, userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { ReactElement } from 'react';
-import { setupMockHandlerCreation, setupMockHandlerUpdating } from '../__mocks__/handlersUtils';
+import {
+  setupMockHandlerCreation,
+  setupMockHandlerDeletion,
+  setupMockHandlerUpdating,
+} from '../__mocks__/handlersUtils';
 import App from '../App';
 import { server } from '../setupTests';
 import { Event, EventForm } from '../types';
@@ -33,7 +37,6 @@ const initialEvents: Event[] = [
 beforeEach(async () => {
   await act(async () => {
     vi.setSystemTime(new Date('2025-05-01'));
-    // renderApp();
   });
 });
 
@@ -62,11 +65,7 @@ describe('일정 CRUD 및 기본 기능', () => {
       },
     };
 
-    render(
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
-    );
+    renderApp();
 
     const titleInput = screen.getByLabelText('제목');
     const dateInput = screen.getByLabelText('날짜');
@@ -108,11 +107,7 @@ describe('일정 CRUD 및 기본 기능', () => {
     const _initialEvents = [...initialEvents];
     setupMockHandlerUpdating(_initialEvents);
 
-    render(
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
-    );
+    renderApp();
 
     const updatedEvent: Event = {
       category: '개인',
@@ -217,23 +212,166 @@ describe('일정 CRUD 및 기본 기능', () => {
     }
   });
 
-  it('일정을 삭제하고 더 이상 조회되지 않는지 확인한다', async () => {});
+  it('일정을 삭제하고 더 이상 조회되지 않는지 확인한다', async () => {
+    const _initialEvents = [...initialEvents];
+    setupMockHandlerDeletion(_initialEvents);
+
+    renderApp();
+
+    const eventList = screen.getByTestId('event-list');
+
+    // 초기 데이터 확인
+    await waitFor(() => {
+      expect(screen.getByText(initialEvents[0].location)).toBeInTheDocument();
+    });
+
+    // 삭제 버튼 클릭
+    const deleteButton = within(eventList).getAllByLabelText(/delete event/i);
+    await userEvent.click(deleteButton[0]);
+
+    // 삭제 확인
+    await waitFor(() => {
+      expect(screen.queryByText(initialEvents[0].title)).not.toBeInTheDocument();
+    });
+  });
 });
 
 describe('일정 뷰', () => {
-  it('주별 뷰를 선택 후 해당 주에 일정이 없으면, 일정이 표시되지 않는다.', async () => {});
+  it('주별 뷰를 선택 후 해당 주에 일정이 없으면, 일정이 표시되지 않는다.', async () => {
+    const _initialEvents = [...initialEvents];
+    setupMockHandlerCreation(_initialEvents);
 
-  it('주별 뷰 선택 후 해당 일자에 일정이 존재한다면 해당 일정이 정확히 표시된다', async () => {});
+    renderApp();
 
-  it('월별 뷰에 일정이 없으면, 일정이 표시되지 않아야 한다.', async () => {});
+    // 초기 데이터 확인
+    await waitFor(() => {
+      expect(screen.getByTestId('event-list')).toBeInTheDocument();
+      expect(screen.getByText(initialEvents[0].location)).toBeInTheDocument();
+    });
 
-  it('월별 뷰에 일정이 정확히 표시되는지 확인한다', async () => {});
+    //week 변환 처리
+    const viewSelect = screen.getByLabelText('view');
+    await userEvent.selectOptions(viewSelect, 'week');
 
-  it('달력에 1월 1일(신정)이 공휴일로 표시되는지 확인한다', async () => {});
+    const eventList = screen.getByTestId('event-list');
+    expect(within(eventList).getByText(/검색 결과가 없습니다./)).toBeInTheDocument();
+  });
+
+  it('주별 뷰 선택 후 해당 일자에 일정이 존재한다면 해당 일정이 정확히 표시된다', async () => {
+    const weekEvent: Event[] = [
+      {
+        category: '업무',
+        date: '2025-05-03',
+        id: '1',
+        title: '생일',
+        startTime: '10:00',
+        endTime: '11:00',
+        description: '생일이에여',
+        location: '회의실 A',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 10,
+      },
+    ];
+    setupMockHandlerCreation([...weekEvent]);
+
+    renderApp();
+
+    // 초기 상태 확인(기본값이 month인지 확인)
+    const viewSelect = screen.getByLabelText('view');
+    expect(viewSelect).toHaveValue('month');
+
+    //week 변환 처리("week로 반드시 변환이 됨"을 검증해야 아래있는 expect가 의미있음)
+    await userEvent.selectOptions(viewSelect, 'week');
+    expect(viewSelect).toHaveValue('week');
+
+    //week변환이 되었는지 확인을 안해주면은 그냥 pass가 되어버림
+    const eventList = screen.getByTestId('event-list');
+    expect(within(eventList).getByText(/생일이에여/)).toBeInTheDocument();
+  });
+
+  it('월별 뷰에 일정이 없으면, 일정이 표시되지 않아야 한다.', async () => {
+    const weekEvent: Event[] = [
+      {
+        category: '업무',
+        date: '2025-06-01',
+        id: '1',
+        title: '생일',
+        startTime: '10:00',
+        endTime: '11:00',
+        description: '생일이에여',
+        location: '회의실 A',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 10,
+      },
+    ];
+    setupMockHandlerCreation([...weekEvent]);
+
+    renderApp();
+
+    // 초기 상태 확인(기본값이 month인지 확인)
+    const viewSelect = screen.getByLabelText('view');
+    expect(viewSelect).toHaveValue('month');
+
+    const eventList = screen.getByTestId('event-list');
+    expect(within(eventList).getByText(/검색 결과가 없습니다./)).toBeInTheDocument();
+  });
+
+  it('월별 뷰에 일정이 정확히 표시되는지 확인한다', async () => {
+    const _initialEvents = [...initialEvents];
+    setupMockHandlerCreation(_initialEvents);
+
+    renderApp();
+
+    // 초기 상태 확인(기본값이 month인지 확인)
+    const viewSelect = screen.getByLabelText('view');
+    expect(viewSelect).toHaveValue('month');
+
+    await userEvent.selectOptions(viewSelect, 'month');
+
+    //검증
+    const eventList = screen.getByTestId('event-list');
+    expect(within(eventList).getByText(/업무/)).toBeInTheDocument();
+    expect(within(eventList).getByText(/2025-05-04/)).toBeInTheDocument();
+    expect(within(eventList).getByText(/생일이에여/)).toBeInTheDocument();
+    expect(within(eventList).getByText(/10:00/)).toBeInTheDocument();
+    expect(within(eventList).getByText(/11:00/)).toBeInTheDocument();
+    expect(within(eventList).getByText(/회의실 A/)).toBeInTheDocument();
+    expect(within(eventList).getByText(/10분 전/)).toBeInTheDocument();
+  });
+
+  it('달력에 1월 1일(신정)이 공휴일로 표시되는지 확인한다', async () => {
+    vi.setSystemTime(new Date('2025-01-01T00:00:00'));
+
+    renderApp();
+
+    const viewSelect = screen.getByLabelText('view');
+    expect(viewSelect).toHaveValue('month');
+
+    const monthView = screen.getByTestId('month-view');
+    expect(within(monthView).getByText(/신정/)).toBeInTheDocument();
+  });
 });
 
 describe('검색 기능', () => {
-  it('검색 결과가 없으면, "검색 결과가 없습니다."가 표시되어야 한다.', async () => {});
+  it('검색 결과가 없으면, "검색 결과가 없습니다."가 표시되어야 한다.', async () => {
+    const weekEvent: Event[] = [
+      {
+        category: '업무',
+        date: '2025-05-01',
+        id: '1',
+        title: '생일',
+        startTime: '10:00',
+        endTime: '11:00',
+        description: '생일이에여',
+        location: '회의실 A',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 10,
+      },
+    ];
+    setupMockHandlerCreation([...weekEvent]);
+
+    // 초기 데이터 확인
+  });
 
   it("'팀 회의'를 검색하면 해당 제목을 가진 일정이 리스트에 노출된다", async () => {});
 
