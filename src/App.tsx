@@ -1,4 +1,4 @@
-import { Box, Flex, useToast } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 
 import CalendarView from './components/calendar/CalendarView.tsx';
 import OverlapDialog from './components/dialog/OverlapDialog';
@@ -12,6 +12,7 @@ import { useEventOperations } from './hooks/useEventOperations';
 import { useNotifications } from './hooks/useNotifications';
 import { useOverlapDialog } from './hooks/useOverlapDialog.ts';
 import { useSearch } from './hooks/useSearch';
+import { useToastMessage } from './hooks/useToastMessage';
 import { Event, EventForm } from './types';
 import { findOverlappingEvents } from './utils/eventOverlap';
 
@@ -65,26 +66,16 @@ function App() {
     closeOverlapDialog,
   } = useOverlapDialog();
 
-  const toast = useToast();
+  const { showErrorToast } = useToastMessage();
 
   const addOrUpdateEvent = async () => {
     if (!title || !date || !startTime || !endTime) {
-      toast({
-        title: '필수 정보를 모두 입력해주세요.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      showErrorToast('필수 정보를 모두 입력해주세요.');
       return;
     }
 
     if (startTimeError || endTimeError) {
-      toast({
-        title: '시간 설정을 확인해주세요.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      showErrorToast('시간 설정을 확인해주세요.');
       return;
     }
 
@@ -196,7 +187,7 @@ function App() {
 
       <OverlapDialog
         isOpen={isOverlapDialogOpen}
-        onClose={closeOverlapDialog} // 수정: useOverlapDialog 훅의 함수 사용
+        onClose={closeOverlapDialog}
         overlappingEvents={overlappingEvents}
         cancelRef={cancelRef}
         onContinue={handleContinueOverlap}
