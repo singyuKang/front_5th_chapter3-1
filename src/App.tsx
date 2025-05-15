@@ -1,17 +1,17 @@
 import { Box, Flex, useToast } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
 
 import CalendarView from './components/calendar/CalendarView.tsx';
-import OverlapDialog from './components/dialog/OverlapDialog.tsx';
-import EventList from './components/event/EventList.tsx';
-import EventEditor from './components/form/EventForm.tsx';
-import NotificationList from './components/notifications/NotificationList.tsx';
-import { categories, notificationOptions } from './constants/index.ts';
-import { useCalendarView } from './hooks/useCalendarView.ts';
-import { useEventForm } from './hooks/useEventForm.ts';
-import { useEventOperations } from './hooks/useEventOperations.ts';
-import { useNotifications } from './hooks/useNotifications.ts';
-import { useSearch } from './hooks/useSearch.ts';
+import OverlapDialog from './components/dialog/OverlapDialog';
+import EventList from './components/event/EventList';
+import EventEditor from './components/form/EventForm';
+import NotificationList from './components/notifications/NotificationList';
+import { categories, notificationOptions } from './constants';
+import { useCalendarView } from './hooks/useCalendarView';
+import { useEventForm } from './hooks/useEventForm';
+import { useEventOperations } from './hooks/useEventOperations';
+import { useNotifications } from './hooks/useNotifications';
+import { useOverlapDialog } from './hooks/useOverlapDialog.ts';
+import { useSearch } from './hooks/useSearch';
 import { Event, EventForm } from './types';
 import { findOverlappingEvents } from './utils/eventOverlap';
 
@@ -57,9 +57,13 @@ function App() {
   const { view, setView, currentDate, holidays, navigate } = useCalendarView();
   const { searchTerm, filteredEvents, setSearchTerm } = useSearch(events, currentDate, view);
 
-  const [isOverlapDialogOpen, setIsOverlapDialogOpen] = useState(false);
-  const [overlappingEvents, setOverlappingEvents] = useState<Event[]>([]);
-  const cancelRef = useRef<HTMLButtonElement>(null);
+  const {
+    isOverlapDialogOpen,
+    overlappingEvents,
+    cancelRef,
+    openOverlapDialog,
+    closeOverlapDialog,
+  } = useOverlapDialog();
 
   const toast = useToast();
 
@@ -103,8 +107,7 @@ function App() {
 
     const overlapping = findOverlappingEvents(eventData, events);
     if (overlapping.length > 0) {
-      setOverlappingEvents(overlapping);
-      setIsOverlapDialogOpen(true);
+      openOverlapDialog(overlapping);
     } else {
       await saveEvent(eventData);
       resetForm();
@@ -112,7 +115,7 @@ function App() {
   };
 
   const handleContinueOverlap = () => {
-    setIsOverlapDialogOpen(false);
+    closeOverlapDialog();
     saveEvent({
       id: editingEvent ? editingEvent.id : undefined,
       title,
@@ -193,7 +196,7 @@ function App() {
 
       <OverlapDialog
         isOpen={isOverlapDialogOpen}
-        onClose={() => setIsOverlapDialogOpen(false)}
+        onClose={closeOverlapDialog} // 수정: useOverlapDialog 훅의 함수 사용
         overlappingEvents={overlappingEvents}
         cancelRef={cancelRef}
         onContinue={handleContinueOverlap}
