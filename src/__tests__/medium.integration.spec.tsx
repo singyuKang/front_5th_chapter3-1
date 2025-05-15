@@ -370,10 +370,45 @@ describe('검색 기능', () => {
     ];
     setupMockHandlerCreation([...weekEvent]);
 
-    // 초기 데이터 확인
+    renderApp();
+
+    await waitFor(() => {
+      expect(screen.getByText(weekEvent[0].location)).toBeInTheDocument();
+    });
+
+    const eventList = screen.getByTestId('event-list');
+    const searchInput = within(eventList).getByPlaceholderText('검색어를 입력하세요');
+
+    await userEvent.type(searchInput, '없는 검색어');
+    expect(within(eventList).getByText(/검색 결과가 없습니다./)).toBeInTheDocument();
   });
 
-  it("'팀 회의'를 검색하면 해당 제목을 가진 일정이 리스트에 노출된다", async () => {});
+  it("'팀 회의'를 검색하면 해당 제목을 가진 일정이 리스트에 노출된다", async () => {
+    const weekEvent: Event[] = [
+      {
+        category: '업무',
+        date: '2025-05-01',
+        id: '1',
+        title: '팀 회의',
+        startTime: '10:00',
+        endTime: '11:00',
+        description: '생일이에여',
+        location: '회의실 A',
+        repeat: { type: 'none', interval: 0 },
+        notificationTime: 10,
+      },
+    ];
+    setupMockHandlerCreation([...weekEvent]);
+
+    renderApp();
+
+    const eventList = screen.getByTestId('event-list');
+    const searchInput = within(eventList).getByPlaceholderText('검색어를 입력하세요');
+
+    await userEvent.type(searchInput, '팀 회의');
+
+    expect(within(eventList).getByText(/팀 회의/)).toBeInTheDocument();
+  });
 
   it('검색어를 지우면 모든 일정이 다시 표시되어야 한다', async () => {});
 });
