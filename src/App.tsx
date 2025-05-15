@@ -32,9 +32,8 @@ import {
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 
+import CalendarView from './components/calendar/CalendarView.tsx';
 import EventEditor from './components/form/EventForm.tsx';
-import MonthView from './components/schedule/MonthView.tsx';
-import WeekView from './components/schedule/WeekView.tsx';
 import { categories, notificationOptions } from './constants/index.ts';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useEventForm } from './hooks/useEventForm.ts';
@@ -175,46 +174,15 @@ function App() {
           categories={categories}
           notificationOptions={notificationOptions}
         />
-        <VStack flex={1} spacing={5} align="stretch">
-          <Heading>일정 보기</Heading>
-
-          <HStack mx="auto" justifyContent="space-between">
-            <IconButton
-              aria-label="Previous"
-              icon={<ChevronLeftIcon />}
-              onClick={() => navigate('prev')}
-            />
-            <Select
-              aria-label="view"
-              value={view}
-              onChange={(e) => setView(e.target.value as 'week' | 'month')}
-            >
-              <option value="week">Week</option>
-              <option value="month">Month</option>
-            </Select>
-            <IconButton
-              aria-label="Next"
-              icon={<ChevronRightIcon />}
-              onClick={() => navigate('next')}
-            />
-          </HStack>
-
-          {view === 'week' && (
-            <WeekView
-              currentDate={currentDate}
-              notifiedEvents={notifiedEvents}
-              filteredEvents={filteredEvents}
-            />
-          )}
-          {view === 'month' && (
-            <MonthView
-              currentDate={currentDate}
-              holidays={holidays}
-              notifiedEvents={notifiedEvents}
-              filteredEvents={filteredEvents}
-            />
-          )}
-        </VStack>
+        <CalendarView
+          view={view}
+          setView={setView}
+          currentDate={currentDate}
+          holidays={holidays}
+          navigate={navigate}
+          filteredEvents={filteredEvents}
+          notifiedEvents={notifiedEvents}
+        />
 
         <VStack data-testid="event-list" w="500px" h="full" overflowY="auto">
           <FormControl>
