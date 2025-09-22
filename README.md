@@ -48,7 +48,7 @@ export const setupMockHandlerCreation = (initEvents = [] as Event[]) => {
   eventStore = initEvents;
 };
 ```
-![스크린샷 2025-05-16 오전 9 13 48](https://github.com/user-attachments/assets/8ab428e3-744f-413a-a8fc-0180b341dcda)
+<img width="634" height="510" alt="Image" src="https://github.com/user-attachments/assets/bad72770-7574-4fac-8547-f245465482a9" />
 
 초기에 주어진 코드를 그대로 사용을 하게 되면은 각 테스트 마다 `eventStore` 상태를 공유하게 됩니다 .
 
@@ -66,7 +66,8 @@ export const setupMockHandlerCreation = (initEvents = [] as Event[]) => {
 
 여기서 테스트가 `독립적`으로 구동시키기 위해서는 각 테스트 마다 `상태를 격리` 시켜주는 것이 중요하다고 생각했습니다.
 
-![스크린샷 2025-05-16 오전 9 24 43](https://github.com/user-attachments/assets/648f7203-3971-48ec-b8da-14dcc8de2885)
+<img width="617" height="478" alt="Image" src="https://github.com/user-attachments/assets/a4de9112-4e43-4a10-8157-4672883fa5b4" />
+
 
 `CreateHandler`를 통해 각 테스트마다 네트워크 요청을 가로채고 제가 지정한 이벤트들을 반환해주도록 하고
 
@@ -333,7 +334,7 @@ it("setView 함수를 사용하여 초기상태 'month'를 'week'으로 변경�
       />
     </Box>
 ```
-![스크린샷 2025-05-16 오전 10 59 39](https://github.com/user-attachments/assets/ba2a8089-b21f-4fbd-8884-3fcbabd8955a)
+<img width="263" height="102" alt="Image" src="https://github.com/user-attachments/assets/33532f1f-0282-4d3c-9d9a-99a9572b961c" />
 
 
 
